@@ -1,6 +1,6 @@
 {
   "name": "@tencent/multi-task",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Node.js 多线程任务处理库",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

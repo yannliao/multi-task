@@ -14,6 +14,10 @@
   },
   "author": "yannliao",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "http://git.code.oa.com/yannliao/multi-task.git"
+  },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@types/node": "^12.12.17",

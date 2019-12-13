@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Node.js 多线程任务处理库",
   "main": "dist/index.js",
-  "types": "dist/Task.d.ts",
+  "types": "dist/index.d.ts",
   "directories": {
     "test": "test"
   },

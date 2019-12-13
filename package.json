@@ -1,0 +1,40 @@
+{
+  "name": "multi-task",
+  "version": "0.1.0",
+  "description": "Node.js 多线程任务处理库",
+  "main": "dist/index.js",
+  "types": "dist/Task.d.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "cover": "nyc npm run test",
+    "test": "node node_modules/mocha/bin/_mocha --no-timeouts -r ts-node/register  test/**/*.test.ts"
+  },
+  "author": "yannliao",
+  "license": "MIT",
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^0.1.3",
+    "@types/node": "^12.12.17",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "all": true,
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "include": "src",
+    "exclude": [
+      "**/dist/**",
+      "**/test/**",
+      "**/coverage/**"
+    ]
+  }
+}

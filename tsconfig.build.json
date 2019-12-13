@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "target": "ES2017",
+        "moduleResolution": "Node",
+        "outDir": "dist",
+        "declaration": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts",
+        "test/**/*.test.ts"
+    ]
+}

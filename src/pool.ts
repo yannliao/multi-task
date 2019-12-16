@@ -11,6 +11,7 @@ const SPAWNING = 'spawning'
 const RUNNING = 'running'
 const DEAD = 'dead'
 
+const NODE_VERSION = process.version.replace('v', '').split('.')
 
 const CPUS = cpus().length
 
@@ -136,11 +137,11 @@ export default class Pool {
         if (!tasktype.type || !tasktype.module) {
             throw new Error('param error')
         }
-        
+
         fs.accessSync(tasktype.module, fs.constants.R_OK | fs.constants.W_OK);
         for (let i = 0; i < this.workers.length; i++) {
             if (tasktype.type === this.workers[i].type) {
-                if(tasktype.module !== this.workers[i].module) {
+                if (tasktype.module !== this.workers[i].module) {
                     throw new Error('Can not register same type task with different module path')
                 }
             }
@@ -180,17 +181,35 @@ export default class Pool {
         })
 
     }
-    async terminate() {
+    async terminate(): Promise<void> {
         try {
-            const pArray = []
+            if (parseInt(NODE_VERSION[0]) >= 12 && parseInt(NODE_VERSION[1]) >= 5) {
+                const pArray = []
 
-            for (let workerObj of this.workers) {
-                let { worker } = workerObj
-                pArray.push(worker.terminate())
+                for (let workerObj of this.workers) {
+                    let { worker } = workerObj
+                    pArray.push(worker.terminate())
+                }
+
+                await Promise.all(pArray)
+                this.workers = []
+            } else {
+                const promise = new Promise(resolve => {
+                    let counter = 0
+                    for (let workerObj of this.workers) {
+                        let { worker } = workerObj
+                        // @ts-ignore
+                        worker.terminate(() => {
+                            counter++
+                            if (counter === this.workers.length) {
+                                this.workers = []
+                                resolve()
+                            }
+                        })
+                    }
+                })
+                await promise
             }
-
-            await Promise.all(pArray)
-            this.workers = []
             this.taskMap.clear()
         } catch (err) {
             console.log(err)

@@ -10,13 +10,17 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "cover": "nyc npm run test",
-    "test": "node node_modules/mocha/bin/_mocha --no-timeouts -r ts-node/register  test/**/*.test.ts"
+    "test": "node --experimental-worker node_modules/mocha/bin/_mocha --no-timeouts -r ts-node/register  test/**/*.test.ts"
   },
   "author": "yannliao",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "http://git.code.oa.com/yannliao/multi-task.git"
+  },
+  "engines": {
+    "node": ">=10.5.0",
+    "npm": ">= 6.0.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^0.1.3",

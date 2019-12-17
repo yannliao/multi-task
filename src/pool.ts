@@ -1,25 +1,25 @@
 
 import { Worker } from 'worker_threads'
-import { cpus } from 'os'
 import fs from 'fs'
 
-import { Task, Executor, TaskType } from './interfaces'
+import { Task, Executor, TaskType, READY, SPAWNING, RUNNING, DEAD, NODE_VERSION, CPUS } from './interfaces'
 
 
-const READY = 'ready'
-const SPAWNING = 'spawning'
-const RUNNING = 'running'
-const DEAD = 'dead'
-
-const NODE_VERSION = process.version.replace('v', '').split('.')
-
-const CPUS = cpus().length
 
 export default class Pool {
+    /**
+     * 任务执行对象池
+     */
     private workers: Array<Executor> = []
+    /**
+    * 待处理任务栈
+    */
     private taskMap: Map<string, Array<Task>> = new Map<string, Array<Task>>()
     // private taskTypeMap: Map<string, TaskType> = new Map<string, TaskType>()
-
+    /**
+     * 释放相关worker，将其设置为ready状态
+     * @param worker 需要释放的worker
+     */
     free(worker: Worker): void {
         for (let i = 0; i < this.workers.length; i++) {
             if (worker.threadId === this.workers[i].worker.threadId) {
@@ -89,7 +89,10 @@ export default class Pool {
         }
 
     }
-
+    /**
+     * 恢复dead的任务处理对象
+     * @param deadWorker 状态为失败的任务处理对象
+     */
     heal(deadWorker: Executor): void {
         // self healing procedure
         // const worker = new Worker(type.module, { eval: true })
@@ -112,7 +115,10 @@ export default class Pool {
             this.tick()
         })
     }
-
+    /**
+     * 添加待处理任务
+     * @param param0 入栈待处理的任务
+     */
     push({ type, data, resolve, reject }: Task): Boolean {
         const found = this.workers.find(worker => worker.type === type);
         if (found) {
@@ -125,7 +131,10 @@ export default class Pool {
         }
         return false
     }
-
+    /**
+     * 注册任务，包括任务类型和任务处理模块地址
+     * @param tasktype 任务注册类型
+     */
     register(tasktype: TaskType): Promise<void> {
         if (this.workers.length >= CPUS) {
             console.warn(`Workers more than cpu core\n`)
@@ -181,6 +190,9 @@ export default class Pool {
         })
 
     }
+    /**
+     * 销毁整个任务处理线程池
+     */
     async terminate(): Promise<void> {
         try {
             if (parseInt(NODE_VERSION[0]) >= 12 && parseInt(NODE_VERSION[1]) >= 5) {
